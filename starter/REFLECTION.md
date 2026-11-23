@@ -17,13 +17,13 @@
 > would you check it?
 
 1. Assumption 1
-   - **Question:** _TODO_
-   - **Assumption:** _TODO_
-   - **Risk:** _TODO_
+   - **Question:** : What do the empty lines in the datafile mean?
+   - **Assumption:** : I assume they are for spacing because there is no delimiter seperating blank values
+   - **Risk:** : I risk wrong calcuation if the lines meant something, so I would ask Jordan whether these lines mean anything or not.
 2. Assumption 2
-   - **Question:** _TODO_
-   - **Assumption:** _TODO_
-   - **Risk:** _TODO_
+   - **Question:** : What happens if the remove command asks to remove more than what we actually have in stock?
+   - **Assumption:** : I remove the transaction as a whole so we aren't left with any negative numbers
+   - **Risk:** : The data entry might be right, but the stock count might be wrong or vice versa.
 
 ## The 3+ edge cases you found and handled
 
