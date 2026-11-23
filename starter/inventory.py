@@ -11,8 +11,11 @@ Before your final push you'll rename this folder to analysis/.
 """
 import json
 
+DATA_FILE = "/Users/alexc/Documents/mod1project/Python-Sporting-Goods-Inventory-Tracker/data/athletic_transactions.txt"
 
-class YourInventoryItem:
+class SportingGoods:
+    lowstock = 10
+
     """
     TODO: rename this class to something that fits your scenario, and
     write a real docstring. What does one of these represent? At minimum
@@ -20,17 +23,37 @@ class YourInventoryItem:
     for, not more and not less.
     """
 
-    def __init__(self):
-        # TODO: add your own parameters (self, plus each attribute you're
+    def __init__(self, name, quantity, category):
+        self.name = name
+        self.quantity = quantity 
+        self.category = category
+        # add your own parameters (self, plus each attribute you're
         # tracking) and store each one as self.whatever = whatever.
-        pass
+        
 
     def is_low_stock(self):
-        """TODO: write your own docstring."""
-        # TODO: return True or False. Your stakeholder didn't say what
-        # "low" means, so decide, and write down the assumption in
+        """True if the item is amost out or up till the limit (lowstock). False if the item is at 0"""
+        if 0 < self.quantity <= self.lowstock:
+            return True, "Restock soon. We are lowstock"
         # REFLECTION.md's "Assumptions" section.
-        pass
+    
+    def needs_restock(self):
+        if self.quantity < 5:
+            return "PURCHASE TODAY OR RISK BEING OUT OF STOCK"
+
+    def shipping(self):
+        if self.quantity == 0:
+            mario = input("Which item do you want to buy?").capitalize()
+            luigi = input("Enter how many items you want to buy")
+            address = input("enter adress here:")
+        # add try except value error when they type out something like nine
+        # add if item not in our list, we don't have that here
+        # add ok "we'll send this many items to address
+        
+            
+
+
+     
 
 
 def read_batch_file(filepath):
@@ -41,19 +64,63 @@ def read_batch_file(filepath):
     ones you write below: what the function does, what it takes, and what
     it returns.
     """
+    with open(filepath) as f:
+        lines = f.read().splitlines()
+    return lines
     # TODO: implement
-    pass
 
-
+field_count = {"ADD": 4, "REMOVE": 3, "SEARCH": 2}
+# set what each field should hold 
 def validate_line(line):
     """TODO: write your own docstring. What makes an ADD, REMOVE, or
     SEARCH line valid? What do you return for a valid line, and what for
     an invalid one?"""
+    line = line.strip()
+    if line == "":
+        return False, "Blank : missing category"
+    parts = line.split(',')
+    records = []
+    for x in parts:
+        records.append(x.strip())
+    command = records[0].upper()
+    # automatically change all commands to uppercase, since thats the majority format
+    if command not in field_count:
+        return False, "Unknown command, its not ADD,REMOVE, or SEARCH"
+        # if there isn't a command, return False
+    name = records[1]
+    if name == "":
+        return False, "Missing a name here"
+        # if there isn't a name, we return false
+    quantity = int(records[2])
+    if quantity == '':
+        return False, "Missing a quantity here"
+        # if there isn't a quantity value, we return false
+    category = records[3]
+    if category == '':
+        return False, "Missing a category here"
+        # if there isn't a category value, we return false
+  
+    
+
+
+
+'''
+records = read_batch_file(DATA_FILE)
+print("Total lines: ",len(records))
+# showcase how many total lines there is
+valid = []
+for linenumber, line in records:
+    ok, reason = validate_line(line)
+    if ok:
+        valid.append(reason)
+    else:
+        print(f"line {linenumber} rejected {reason}")
+'''
     # TODO: implement. One choice worth making on purpose: a quantity can
     # be present but not a number ("five"). Wrap int(quantity) in a
     # try/except ValueError. That asks Python "did this work?" instead
     # of trying to predict every way it could fail.
-    pass
+
 
 
 def process_transactions(lines):
@@ -86,7 +153,7 @@ def print_summary(items):
 
 
 # TODO: point this at the data file for the scenario you chose.
-lines = read_batch_file("data/____________.txt")
+lines = read_batch_file("data/athletic_transactions.txt")
 items = process_transactions(lines)
 print_summary(items)
 export_to_json(items)
