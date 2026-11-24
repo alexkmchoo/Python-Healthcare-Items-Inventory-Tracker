@@ -11,30 +11,28 @@ Before your final push you'll rename this folder to analysis/.
 """
 import json
 
-DATA_FILE = "/Users/alexc/Documents/mod1project/Python-Sporting-Goods-Inventory-Tracker/data/athletic_transactions.txt"
+DATA_FILE = "/Users/alexc/Documents/mod1project/Python-Sporting-Goods-Inventory-Tracker/data/healthcare_transactions.txt"
 
-class SportingGoods:
-    lowstock = 10
-
-    """
-    TODO: rename this class to something that fits your scenario, and
-    write a real docstring. What does one of these represent? At minimum
-    you'll need a name and a quantity. Add what your stakeholder asked
-    for, not more and not less.
-    """
+class MedicalInventory:
+    """Represents medical item in inventory with tracking"""
+    low_general = 13
+    low_specific = {"PPE": 20,
+    "Wound Care" : 20,
+    "Equipment" : 10,
+    "Medication" : 15
+    }
 
     def __init__(self, name, quantity, category):
         self.name = name
         self.quantity = quantity 
         self.category = category
-        # add your own parameters (self, plus each attribute you're
-        # tracking) and store each one as self.whatever = whatever.
+        # we don't add command here as an attribute because we don't actually call it
         
 
     def is_low_stock(self):
-        """True if the item is amost out or up till the limit (lowstock). False if the item is at 0"""
-        return 0 < self.quantity <= self.lowstock
-        # REFLECTION.md's "Assumptions" section.
+        """Returns true if the quantity is at or below the quantity's cutoff"""
+        cutoff = self.low_specific.get(self.category, self.low_general)
+        return 0 <= self.quantity <= cutoff
     
     def add_stock(self, amount):
         if amount <= 0:
@@ -46,9 +44,6 @@ class SportingGoods:
             return False, "Your amount will be negative"
         self.quantity -= amount
         return True, "Stock reduced successfully!"
-    def in_stock(self):
-        if self.quantity == 0:
-            return "Out of Stock"
 
 
      
