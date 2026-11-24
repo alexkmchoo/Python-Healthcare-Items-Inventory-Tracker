@@ -33,24 +33,22 @@ class SportingGoods:
 
     def is_low_stock(self):
         """True if the item is amost out or up till the limit (lowstock). False if the item is at 0"""
-        if 0 < self.quantity <= self.lowstock:
-            return True, "Restock soon. We are lowstock"
+        return 0 < self.quantity <= self.lowstock
         # REFLECTION.md's "Assumptions" section.
     
-    def needs_restock(self):
-        if self.quantity < 5:
-            return "PURCHASE TODAY OR RISK BEING OUT OF STOCK"
-
-    def shipping(self):
+    def add_stock(self, amount):
+        if amount <= 0:
+            return False, "Amount must be a positive number"
+        self.quantity += amount
+        return True, "Stock successfully added!"
+    def reduce_stock(self, amount):
+        if amount > self.quantity:
+            return False, "Your amount will be negative"
+        self.quantity -= amount
+        return True, "Stock reduced successfully!"
+    def in_stock(self):
         if self.quantity == 0:
-            mario = input("Which item do you want to buy?").capitalize()
-            luigi = input("Enter how many items you want to buy")
-            address = input("enter adress here:")
-        # add try except value error when they type out something like nine
-        # add if item not in our list, we don't have that here
-        # add ok "we'll send this many items to address
-        
-            
+            return "Out of Stock"
 
 
      
