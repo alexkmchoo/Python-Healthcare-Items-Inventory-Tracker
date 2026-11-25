@@ -45,22 +45,21 @@ class MedicalInventory:
         self.quantity -= amount
         return True, "Stock reduced successfully!"
 
+masks = MedicalInventory("Surgical Face Masks", 29, "PPE") 
+gloves = MedicalInventory("Nitrile Exam Gloves (M)", 20, "PPE")
+# testing to see if the method works
+# print(masks.is_low_stock()) 
+# This should print out False because 29 > 20, meaning we don't need to restock
+# print(gloves.is_low_stock())
+# # This should print out False because 20 = 20, meaning we we are at the threshold, we need to restock
 
-     
 
-
+# Use this docstring as the model for the ones you write below: what the function does, what it takes, and what it returns.
 def read_batch_file(filepath):
-    """
-    Read the batch file at `filepath` and return a list of its lines
-    (strings), unchanged. Deciding whether a line is usable happens in
-    validate_line(), not here. Use this docstring as the model for the
-    ones you write below: what the function does, what it takes, and what
-    it returns.
-    """
+    """ Read the batch file at `filepath` and return a list of its lines (strings), unchanged"""
     with open(filepath) as f:
         lines = f.read().splitlines()
     return lines
-    # TODO: implement
 
 field_count = {"ADD": 4, "REMOVE": 3, "SEARCH": 2}
 # set what each field should hold 
@@ -78,37 +77,58 @@ def validate_line(line):
     command = records[0].upper()
     # automatically change all commands to uppercase, since thats the majority format
     if command not in field_count:
-        return False, "Unknown command, its not ADD,REMOVE, or SEARCH"
-        # if there isn't a command, return False
+        return False, "Unknown command, its not ADD, REMOVE, or SEARCH"
+        # catches any mistyped commands or random commands
+        # Kept getting a KeyError, even though I have something that catches it, so moved this above the length check and it worked
+    if len(records) != field_count[command]:
+        return False, f"The number of fields must equal the stated field count. I got: {len(records)}"
+        # We stated the number of fields each command must have , this checks it so we can safely move on
     name = records[1]
     if name == "":
         return False, "Missing a name here"
         # if there isn't a name, we return false
-    quantity = int(records[2])
-    if quantity == '':
-        return False, "Missing a quantity here"
-        # if there isn't a quantity value, we return false
+    if command == "SEARCH":
+        return True, (command, name, None, None)
+        # included this so the next part runs when we use records[2] after, since records[2] doesn't exist in search
+    try:
+        quantity = int(parts[2])
+        # was going to do this without a try, but an error came up because in the dataset there is a "five" in the quantity column
+    except ValueError:
+        return False, f"'{parts[2]}' is not a whole number"
+    if quantity <=0:
+        return False, "quantity must be greater than 0"
+    if command == "REMOVE":
+        return True, (command, name, quantity, None)
+        # included this here so records[3] after this can be used since remove doesn't have that third index
     category = records[3]
     if category == '':
         return False, "Missing a category here"
         # if there isn't a category value, we return false
-  
+    return True, (command, name, quantity, category)
+
+print(validate_line("ADD, Surgical Masks, 90, PPE"))
+# perfect one
+print(validate_line("Add, Surgical Masks, 7, PPE"))
+# lowercase, checking if the upper works
+print(validate_line("random, Surgical Masks, 7, PPE"))
+# checking to see if non command works, got a keyerror instead of continuing with the next print
+print(validate_line("RAMOVE, Surgical Masks, 90, PPE"))
+# checking to see if a mistyped command works
+print(validate_line("ADD, Surgical Masks, 7 million, PPE"))
+# checking to see if a non-integer would work, got the keyerror above this print line, but when commented out, it did catch it
+print(validate_line("Search, Surgical Masks, 90, PPE"))
+# checking to see if a fieldout error would be caught and continue running
+print(validate_line("SEARCH, Surgical Masks"))
+# safety print to see if it prints the actual correct field out
     
 
 
 
-'''
-records = read_batch_file(DATA_FILE)
-print("Total lines: ",len(records))
+
+lines = read_batch_file(DATA_FILE)
+print("Total lines: ",len(lines))
 # showcase how many total lines there is
-valid = []
-for linenumber, line in records:
-    ok, reason = validate_line(line)
-    if ok:
-        valid.append(reason)
-    else:
-        print(f"line {linenumber} rejected {reason}")
-'''
+
     # TODO: implement. One choice worth making on purpose: a quantity can
     # be present but not a number ("five"). Wrap int(quantity) in a
     # try/except ValueError. That asks Python "did this work?" instead
@@ -118,6 +138,12 @@ for linenumber, line in records:
 
 def process_transactions(lines):
     """TODO: write your own docstring."""
+    ok, reason = validate_line(line)
+    if ok :
+        return (command, name, quantity, category)
+    if not ok:
+        return reason
+
     # TODO: implement. Loop over the lines, apply each valid one to your
     # collection of items, and print a specific message for each line
     # you skip. Return the collection at the end. The full inventory
