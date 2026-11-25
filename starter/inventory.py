@@ -108,12 +108,12 @@ def validate_line(line):
 
 print(validate_line("ADD, Surgical Masks, 90, PPE"))
 # perfect one
-print(validate_line("Add, Surgical Masks, 7, PPE"))
+print(validate_line("add, Surgical Masks, 7, PPE"))
 # lowercase, checking if the upper works
 print(validate_line("random, Surgical Masks, 7, PPE"))
 # checking to see if non command works, got a keyerror instead of continuing with the next print
 print(validate_line("RAMOVE, Surgical Masks, 90, PPE"))
-# checking to see if a mistyped command works
+# checking to see if a mistyped command will get caught
 print(validate_line("ADD, Surgical Masks, 7 million, PPE"))
 # checking to see if a non-integer would work, got the keyerror above this print line, but when commented out, it did catch it
 print(validate_line("Search, Surgical Masks, 90, PPE"))
@@ -138,17 +138,37 @@ print("Total lines: ",len(lines))
 
 def process_transactions(lines):
     """TODO: write your own docstring."""
-    ok, reason = validate_line(line)
-    if ok :
-        return (command, name, quantity, category)
-    if not ok:
-        return reason
-
+    stock = {}
+    for linenumber, line in enumerate(lines, start=1):
+        # want to count it line by line, which is why we use enumerate here
+        if line.strip() == "":
+            continue
+        ok, reason = validate_line(line)
+        if not ok:
+            print(f"This line {linenumber} is skipped: {line} | This is why: {reason}")
+            continue
+        command, name, quantity, category = reason
+    return stock
+test = ["ADD, Surgical Masks, 90, PPE",
+          "",
+          "add, Surgical Masks, 7, PPE",
+          "random, Surgical Masks, 7, PPE",
+          "",
+          "RAMOVE, Surgical Masks, 90, PPE",
+          "ADD, Surgical Masks, 7 million, PPE",
+          "Search, Surgical Masks, 90, PPE",
+          "SEARCH, Surgical Masks",
+]
+result = process_transactions(test)
+print(result)
+lines = read_batch_file(DATA_FILE)
+print("Total lines: ",len(lines))
+process_transactions(lines)
     # TODO: implement. Loop over the lines, apply each valid one to your
     # collection of items, and print a specific message for each line
     # you skip. Return the collection at the end. The full inventory
     # printout is print_summary's job, not this function's.
-    pass
+    
 
 
 def find_item(items, name):
@@ -170,9 +190,9 @@ def print_summary(items):
     # anything.
     pass
 
-
+'''
 # TODO: point this at the data file for the scenario you chose.
 lines = read_batch_file("data/athletic_transactions.txt")
 items = process_transactions(lines)
 print_summary(items)
-export_to_json(items)
+export_to_json(items)'''
