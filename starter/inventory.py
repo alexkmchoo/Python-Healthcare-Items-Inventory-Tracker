@@ -27,6 +27,8 @@ class MedicalInventory:
         self.quantity = quantity 
         self.category = category
         # we don't add command here as an attribute because we don't actually call it
+    def __str__(self):
+            return f"Name: {self.name}, Quantity: {self.quantity}, Category: {self.category}"
         
 
     def is_low_stock(self):
@@ -149,21 +151,18 @@ def process_transactions(lines):
             continue
         command, name, quantity, category = reason
     return stock
-test = ["ADD, Surgical Masks, 90, PPE",
-          "",
-          "add, Surgical Masks, 7, PPE",
-          "random, Surgical Masks, 7, PPE",
-          "",
-          "RAMOVE, Surgical Masks, 90, PPE",
-          "ADD, Surgical Masks, 7 million, PPE",
-          "Search, Surgical Masks, 90, PPE",
-          "SEARCH, Surgical Masks",
-]
-result = process_transactions(test)
-print(result)
-lines = read_batch_file(DATA_FILE)
-print("Total lines: ",len(lines))
-process_transactions(lines)
+# test = ["ADD, Surgical Masks, 90, PPE",
+#           "",
+#           "add, Surgical Masks, 7, PPE",
+#           "random, Surgical Masks, 7, PPE",
+#           "",
+#           "RAMOVE, Surgical Masks, 90, PPE",
+#           "ADD, Surgical Masks, 7 million, PPE",
+#           "Search, Surgical Masks, 90, PPE",
+#           "SEARCH, Surgical Masks",
+# ]
+# result = process_transactions(test)
+# print(result)
     # TODO: implement. Loop over the lines, apply each valid one to your
     # collection of items, and print a specific message for each line
     # you skip. Return the collection at the end. The full inventory
@@ -172,10 +171,17 @@ process_transactions(lines)
 
 
 def find_item(items, name):
-    """TODO: write your own docstring."""
-    # TODO: implement
-    pass
+    """Find and return an item from a dictionary that also catches case sensitive names"""
+    cleaned_matching = name.strip().lower()
+    return items.get(cleaned_matching)
 
+tester = {"digital thermometers": MedicalInventory("Digital Thermometers", 90,"Equipment"),
+          "adhesive bandages": MedicalInventory("Adhesive Bandages",4,"Wound Care"),
+          "compression stockings": MedicalInventory("Compression Stockings",21,"Wound Care")
+          }
+
+print(find_item((tester, "DIGITAL THERMOMETERS")))
+print(find_item((tester, "adhesive bandages")))
 
 def export_to_json(items, filepath="inventory.json"):
     """TODO: write your own docstring. json.dump can't write your objects
@@ -186,9 +192,9 @@ def export_to_json(items, filepath="inventory.json"):
 
 def print_summary(items):
     """TODO: write your own docstring."""
-    # TODO: implement. This one only prints, so it doesn't need to return
-    # anything.
-    pass
+lines = read_batch_file(DATA_FILE)
+print("Total lines: ",len(lines))
+process_transactions(lines)
 
 '''
 # TODO: point this at the data file for the scenario you chose.
